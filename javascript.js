@@ -3,7 +3,16 @@ var outputElement = document.getElementById('output-list')
 const splitLines = str => str.split(/\r?\n/);
 
 let in_battalion = false;
-
+const BATTALION_NAMES = [
+    "Hunters of the Heartlands",
+    "Alpha-Beast Pack",
+    "Warlord",
+    "Command Entourage",
+    "Vanguard",
+    "Grand Battery",
+    "Battle Regiment",
+    "Linebreaker"
+]
 
 /**
  * Global variable for army list
@@ -16,9 +25,7 @@ let army_list = {
     grand_strategy: "",
     triumphs: "",
     units: {
-        battle_regiment: [],
-        warlord: [],
-        hunters: [],
+        battalions:[],
         none: []
     },
     total_points: ""
@@ -38,9 +45,7 @@ function refreshArmyListObject(army_list) {
         grand_strategy: "",
         triumphs: "",
         units: {
-            battle_regiment: [],
-            warlord: [],
-            hunters: [],
+            battalions:[],
             none: []
         },
         total_points: ""
@@ -62,7 +67,8 @@ function parseList(list) {
     // Blank the previous list before doing anything else 
     refreshArmyListObject(army_list)
     var arr = list.split(/\r?\n/);
-    parsing_units = false;
+    let parsing_units = false;
+    let parsing_battalions = false;
 
     for (var i = 0; i < arr.length; i++){
 
@@ -70,8 +76,15 @@ function parseList(list) {
         // console.log(JSON.stringify(line))
         parseArmyWide(line);
         
-        if (line.includes("Total Points") || line.includes("Core Battalions") || line.includes("Endless Spells")) {
+        if (line.includes("Total Points") || line.includes("Endless Spells")) {
             parsing_units = false;
+            parsing_battalions = false;
+        }
+        else if (line.includes("Core Battalions")) {
+            parsing_units = false;
+            parsing_battalions = true;
+            // Skip to the name of the first battalion
+            continue;
         }
 
         if (parsing_units) {
@@ -94,10 +107,39 @@ function parseList(list) {
             // No need to iterate over again, skip ahead to the nex one
             i = final_unit_index;
         }
+        else if (parsing_battalions) {
+            // Batt name and start of the batt
+            const start_index = i;
+            let final_batt_index = i+1;
+
+            // parseint because IDK if JS is copy by value or ref
+            for (let j = parseInt(i+1); j < arr.length; j++) {
+                let element = arr[j].trim();
+                // Mark the end of this battalion
+                if(BATTALION_NAMES.indexOf(element) != -1){
+                    // The next battalion minu 1 line
+                    final_batt_index = j-1;
+                    break;
+                }
+                // Because the batts might just end gotta catch it
+                if (element.includes("Total Points") || element.includes("Endless Spells")) {
+                    final_batt_index = j-1;
+                    break;
+                }
+            }
+
+            army_list.units.battalions.push(arr[start_index].trim());
+
+            // let unit_stats = parseUnit(start_index, final_batt_index, arr)
+            // army_list.units.none.push(unit_stats);
+            // No need to iterate over again, skip ahead to the nex one
+            i = final_batt_index;
+        }
 
         // Some flags to control flow through this
         if (!parsing_units && line.includes("Units")) {
             parsing_units = true;
+            parsing_battalions = false
         }
         
 
