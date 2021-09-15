@@ -25,10 +25,12 @@
         <textarea class="form-control" name="input-list" onInput="updateList(this.value);"></textarea>
       </div>
       <div class="col">
+        <button class="btn btn-clipboard" type="button" data-clipboard-target="#output-list">Copy</button>
         <pre class="form-control" id="output-list"></pre>
       </div>
     </div>
   </div>
+  <script src="clipboard.min.js"></script>
   <script src="javascript.js"></script>
 </body>
 
