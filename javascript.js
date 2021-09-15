@@ -69,6 +69,7 @@ function parseList(list) {
     var arr = list.split(/\r?\n/);
     let parsing_units = false;
     let parsing_battalions = false;
+    let num_batts = 0;
 
     for (var i = 0; i < arr.length; i++){
 
@@ -128,7 +129,11 @@ function parseList(list) {
                 }
             }
 
-            army_list.units.battalions.push(arr[start_index].trim());
+            num_batts++;
+            let batt = parseBattalion(start_index, final_batt_index, arr, num_batts)
+            army_list.units.battalions.push(batt);
+
+            // army_list.units.battalions.push(arr[start_index].trim());
 
             // let unit_stats = parseUnit(start_index, final_batt_index, arr)
             // army_list.units.none.push(unit_stats);
@@ -192,8 +197,9 @@ function parseArmyWide(line) {
  * @param {number} start_index index for first line of unit(unit name)
  * @param {number} end_index index of last line of unit(point cost)
  * @param {string} list raw string from input box
+ * @param {number} num_asterisk symbol to give all the units in this battalion
  */
-function parseUnit(start_index, end_index, list) {
+function parseUnit(start_index, end_index, list, num_asterisk=0) {
     let unit = {
         unit_name: "",
         unit_role: "",
@@ -204,6 +210,7 @@ function parseUnit(start_index, end_index, list) {
         // unit_mount_traits: "",
         // unit_reinforced: "",
         unit_points: "",
+        unit_batt_symbol: "*".repeat(num_asterisk)
     };
     unit.unit_name = list[start_index].trim();
     for (let i = start_index; i<=end_index; i++) {
@@ -216,7 +223,7 @@ function parseUnit(start_index, end_index, list) {
             unit.unit_trait = line.split(":")[1].trim();
         }
         else if (line.includes("Artefact")){
-            unit_artefact = line.split(":")[1].trim();
+            unit.unit_artefact = line.split(":")[1].trim();
         }
         else if (line.includes("Prayer")){
             unit.unit_prayers = line.split(":")[1].trim();
@@ -236,6 +243,51 @@ function parseUnit(start_index, end_index, list) {
     }
 
     return unit;
+}
+
+/**
+ * Parse all the lines of a battalion
+ * @param {number} start_index index for first line of unit(unit name)
+ * @param {number} end_index index of last line of unit(point cost)
+ * @param {string} list raw string from input 
+ * @param {number} num_asterisk symbol to give all the units in this battalion
+ */
+function parseBattalion(start_index, end_index, list, num_asterisk) {
+    let battalion = {
+        batt_name: "",
+        // batt_symbol: "*".repeat(num_asterisk),
+        batt_units: [],
+        // batt_bonus: "",
+    };
+    battalion.batt_name = list[start_index].trim();
+    for (let i = start_index+1; i<=end_index; i++) {
+        const line = list[i];
+
+        if (line.includes("Magnificent")) {
+            battalion.batt_bonus = line.split(":")[1].trim();
+        }
+        else {
+            // Unit name and start of the unit
+            const start_unit_index = i;
+            let final_unit_index = i+1;
+
+            // parseint because IDK if JS is copy by value or ref
+            for (let j = parseInt(i+1); j < list.length; j++) {
+                const element = list[j];
+                // Mark the end of this unit
+                if(element.includes("Points")){
+                    final_unit_index = j;
+                    break;
+                }
+            }
+
+            let unit_stats = parseUnit(start_unit_index, final_unit_index, list, num_asterisk)
+            battalion.batt_units.push(unit_stats);
+            // No need to iterate over again, skip ahead to the nex one
+            i = final_unit_index;
+        }        
+    }
+    return battalion;
 }
 
 new ClipboardJS('.btn');
