@@ -28,6 +28,7 @@ let army_list = {
         battalions:[],
         none: []
     },
+    endless_spells: [],
     total_points: ""
 
 };
@@ -48,6 +49,7 @@ function refreshArmyListObject(army_list) {
             battalions:[],
             none: []
         },
+        endless_spells: [],
         total_points: ""
     }
 }
@@ -69,6 +71,7 @@ function parseList(list) {
     var arr = list.split(/\r?\n/);
     let parsing_units = false;
     let parsing_battalions = false;
+    let parsing_endless = false;
     let num_batts = 0;
 
     for (var i = 0; i < arr.length; i++){
@@ -77,19 +80,28 @@ function parseList(list) {
         // console.log(JSON.stringify(line))
         parseArmyWide(line);
         
-        if (line.includes("Total Points") || line.includes("Endless Spells")) {
+        if (line.includes("Total Points")) {
             parsing_units = false;
             parsing_battalions = false;
+            parsing_endless = false;
         }
         else if (line.includes("Core Battalions")) {
             parsing_units = false;
             parsing_battalions = true;
+            parsing_endless = false;
             // Skip to the name of the first battalion
+            continue;
+        }
+        else if (line.includes("Endless Spells")) {
+            parsing_units = false;
+            parsing_battalions = false;
+            parsing_endless = true;
+            // Skip to the name of the first endless
             continue;
         }
 
         if (parsing_units) {
-           // Unit name and start of the unit
+            // Unit name and start of the unit
             const start_index = i;
             let final_unit_index = i+1;
 
@@ -139,6 +151,26 @@ function parseList(list) {
             // army_list.units.none.push(unit_stats);
             // No need to iterate over again, skip ahead to the nex one
             i = final_batt_index;
+        }
+        else if (parsing_endless) {
+             // Unit name and start of the unit
+             const start_index = i;
+             let final_endless_index = i+1;
+ 
+             // parseint because IDK if JS is copy by value or ref
+             for (let j = parseInt(i+1); j < arr.length; j++) {
+                 const element = arr[j];
+                 // Mark the end of this unit
+                 if(element.includes("Points")){
+                     final_unit_index = j;
+                     break;
+                 }
+             }
+ 
+             let endless_stats = parseEndless(start_index, final_unit_index, arr)
+             army_list.endless_spells.push(endless_stats);
+             // No need to iterate over again, skip ahead to the nex one
+             i = final_unit_index;
         }
 
         // Some flags to control flow through this
@@ -243,6 +275,29 @@ function parseUnit(start_index, end_index, list, num_asterisk=0) {
     }
 
     return unit;
+}
+
+/**
+ * Parse all the lines of an endless spell
+ * @param {number} start_index index for first line of unit(unit name)
+ * @param {number} end_index index of last line of unit(point cost)
+ * @param {string} list raw string from input box
+
+ */
+ function parseEndless(start_index, end_index, list) {
+    let endless = {
+        endless_name: "",
+        endless_points: "",
+    };
+    endless.endless_name = list[start_index].trim();
+    for (let i = start_index; i<=end_index; i++) {
+        const line = list[i];
+        if (line.includes("Points")) {
+            endless.endless_points = line.split(":")[1].trim();
+        }
+    }
+
+    return endless;
 }
 
 /**
