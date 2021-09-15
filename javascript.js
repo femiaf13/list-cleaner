@@ -11,6 +11,7 @@ let in_battalion = false;
 let army_list = {
     army_name: "",
     army_alleigance: "",
+    army_type: "",
     army_subfaction: "",
     grand_strategy: "",
     triumphs: "",
@@ -19,7 +20,8 @@ let army_list = {
         warlord: [],
         hunters: [],
         none: []
-    }
+    },
+    total_points: ""
 
 };
 
@@ -31,6 +33,7 @@ function refreshArmyListObject(army_list) {
     army_list = {
         army_name: "",
         army_alleigance: "",
+        army_type: "",
         army_subfaction: "",
         grand_strategy: "",
         triumphs: "",
@@ -39,7 +42,8 @@ function refreshArmyListObject(army_list) {
             warlord: [],
             hunters: [],
             none: []
-        }
+        },
+        total_points: ""
     }
 }
 
@@ -66,7 +70,7 @@ function parseList(list) {
         // console.log(JSON.stringify(line))
         parseArmyWide(line);
         
-        if (line.includes("Total Points")) {
+        if (line.includes("Total Points") || line.includes("Core Battalions") || line.includes("Endless Spells")) {
             parsing_units = false;
         }
 
@@ -116,6 +120,9 @@ function parseArmyWide(line) {
     else if (line.includes("Army Faction:")) {
         army_list.army_alleigance = line.split(":")[1].trim();
     }
+    else if (line.includes("Army Type:")) {
+        army_list.army_type = line.split(":")[1].trim();
+    }
     else if (line.includes("Subfaction:")) {
         army_list.army_subfaction = line.split(":")[1].trim();
     }
@@ -124,6 +131,9 @@ function parseArmyWide(line) {
     }
     else if (line.includes("Triumph")) {
         army_list.triumphs = line.split(":")[1].trim();
+    }
+    else if (line.includes("Total Points")) {
+        army_list.total_points = line.split(":")[1].trim();
     }
     // else if (line.includes("Battle Regiment")) {
     //     // army_list.triumphs = line.split(":")[1].trim();
