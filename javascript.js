@@ -400,14 +400,14 @@ function formatList(army_list) {
     // Format the leaders in battalions
     army_list.units.battalions.forEach(batt => {
         batt.batt_units.forEach(batt_unit => {
-            if (batt_unit.unit_role == "Leader") {
+            if (batt_unit.unit_role.includes("Leader")) {
                 army_export = formatUnit(army_export, batt_unit);
             }
         });
     });
     // And now the ones not in battalions
     army_list.units.none.forEach(unit => {
-        if (unit.unit_role == "Leader") {
+        if (unit.unit_role.includes("Leader")) {
             army_export = formatUnit(army_export, unit);
         }
     });
