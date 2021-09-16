@@ -391,8 +391,9 @@ function formatList(army_list) {
     }
     army_export += '- Grand Strategy: '+army_list.grand_strategy+'\n';
     army_export += '- Triumphs: '+army_list.triumphs+'\n';
-    // TODO: Make this only appear if there is one
-    army_export += '- Unique Enhancement: '+army_list.unique_enhancement+'\n';
+    if (army_list.unique_enhancement != "") {
+        army_export += '- Unique Enhancement: '+army_list.unique_enhancement+'\n';
+    }
     army_export += '\n';
     army_export += 'Leaders\n';
     army_export += '----------\n';
