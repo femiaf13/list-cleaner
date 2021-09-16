@@ -1,4 +1,10 @@
+var inputElement = document.getElementById('input-list')
 var outputElement = document.getElementById('output-list')
+
+function clean() {
+    outputElement.innerHTML = "";
+    parseList(inputElement.value);
+}
 
 const splitLines = str => str.split(/\r?\n/);
 
@@ -38,7 +44,7 @@ let army_list = {
  * 
  * @param {object} army_list 
  */
-function refreshArmyListObject(army_list) {
+function refreshArmyListObject() {
     army_list = {
         army_name: "",
         army_alleigance: "",
@@ -69,7 +75,7 @@ function parseList(list) {
     // let output = lines.join('\n')
 
     // Blank the previous list before doing anything else 
-    refreshArmyListObject(army_list)
+    refreshArmyListObject()
     var arr = list.split(/\r?\n/);
     let parsing_units = false;
     let parsing_battalions = false;
@@ -385,6 +391,7 @@ function formatList(army_list) {
     }
     army_export += '- Grand Strategy: '+army_list.grand_strategy+'\n';
     army_export += '- Triumphs: '+army_list.triumphs+'\n';
+    // TODO: Make this only appear if there is one
     army_export += '- Unique Enhancement: '+army_list.unique_enhancement+'\n';
     army_export += '\n';
     army_export += 'Leaders\n';

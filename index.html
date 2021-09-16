@@ -22,7 +22,8 @@
     <p>Because life's too short for wildly verbose list output.<p>
     <div class="row">
       <div class="col">
-        <textarea class="form-control" name="input-list" onInput="parseList(this.value);"></textarea>
+        <button class="btn btn-primary" type="button" onclick="clean();">Clean</button>
+        <textarea class="form-control" id="input-list"></textarea>
       </div>
       <div class="col">
         <button class="btn btn-primary" type="button" data-clipboard-target="#output-list">Copy</button>
