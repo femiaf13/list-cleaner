@@ -85,6 +85,9 @@ function parseList(list) {
     for (var i = 0; i < arr.length; i++){
 
         let line = arr[i];
+        if (line == "") {
+            continue;
+        }
         // console.log(JSON.stringify(line))
         parseArmyWide(line);
         
