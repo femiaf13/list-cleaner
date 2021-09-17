@@ -253,6 +253,9 @@ function parseUnit(start_index, end_index, list, num_asterisk=0) {
     unit.unit_name = list[start_index].trim();
     for (let i = start_index; i<=end_index; i++) {
         const line = list[i];
+        if (line == "") {
+            continue;
+        }
 
         if (line.includes("Battlefield Role:")) {
             unit.unit_role = line.split(":")[1].trim();
@@ -298,6 +301,9 @@ function parseUnit(start_index, end_index, list, num_asterisk=0) {
     endless.endless_name = list[start_index].trim();
     for (let i = start_index; i<=end_index; i++) {
         const line = list[i];
+        if (line == "") {
+            continue;
+        }
         if (line.includes("Points")) {
             endless.endless_points = line.split(":")[1].trim();
         }
@@ -323,6 +329,9 @@ function parseBattalion(start_index, end_index, list, num_asterisk) {
     battalion.batt_name = list[start_index].trim();
     for (let i = start_index+1; i<=end_index; i++) {
         const line = list[i];
+        if (line == "") {
+            continue;
+        }
 
         if (line.includes("Magnificent")) {
             battalion.batt_bonus = line.split(":")[1].trim();
