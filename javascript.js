@@ -508,7 +508,13 @@ function formatList(army_list) {
     army_export += 'Core Battalions\n';
     army_export += '----------\n';
     army_list.units.battalions.forEach(batt => {
-        army_export += batt.batt_name + batt.batt_units[0].unit_batt_symbol+'\n';
+        // If they don't put anything in a battalion there won't be a symbol
+        if (batt.batt_units.length != 0) {
+            army_export += batt.batt_name + batt.batt_units[0].unit_batt_symbol+'\n';
+        }
+        else {
+            army_export += batt.batt_name +'\n';
+        }
         if ('batt_bonus' in batt) {
             army_export += '- Bonus Enhancement: '+batt.batt_bonus+'\n';
         }
