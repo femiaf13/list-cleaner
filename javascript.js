@@ -516,6 +516,7 @@ function formatList(army_list) {
 
     army_export += '\n';
     army_export += 'Total Points: '+army_list.total_points+'\n';
+    army_export += 'Made with AoS App List Cleaner - https://femiaf13.github.io/list-cleaner/ ';
     return army_export;
 }
 
