@@ -19,6 +19,7 @@ const BATTALION_NAMES = [
     "Battle Regiment",
     "Linebreaker"
 ]
+const BATTALION_SYMBOL = "+";
 
 /**
  * Global variable for army list
@@ -235,9 +236,9 @@ function parseArmyWide(line) {
  * @param {number} start_index index for first line of unit(unit name)
  * @param {number} end_index index of last line of unit(point cost)
  * @param {string} list raw string from input box
- * @param {number} num_asterisk symbol to give all the units in this battalion
+ * @param {number} num_batt_symbol symbol to give all the units in this battalion
  */
-function parseUnit(start_index, end_index, list, num_asterisk=0) {
+function parseUnit(start_index, end_index, list, num_batt_symbol=0) {
     let unit = {
         unit_name: "",
         unit_role: "",
@@ -248,7 +249,7 @@ function parseUnit(start_index, end_index, list, num_asterisk=0) {
         // unit_mount_traits: "",
         // unit_reinforced: "",
         unit_points: "",
-        unit_batt_symbol: "*".repeat(num_asterisk)
+        unit_batt_symbol: BATTALION_SYMBOL.repeat(num_batt_symbol)
     };
     unit.unit_name = list[start_index].trim();
     for (let i = start_index; i<=end_index; i++) {
@@ -317,12 +318,11 @@ function parseUnit(start_index, end_index, list, num_asterisk=0) {
  * @param {number} start_index index for first line of unit(unit name)
  * @param {number} end_index index of last line of unit(point cost)
  * @param {string} list raw string from input 
- * @param {number} num_asterisk symbol to give all the units in this battalion
+ * @param {number} num_batt_symbol symbol to give all the units in this battalion
  */
-function parseBattalion(start_index, end_index, list, num_asterisk) {
+function parseBattalion(start_index, end_index, list, num_batt_symbol) {
     let battalion = {
         batt_name: "",
-        // batt_symbol: "*".repeat(num_asterisk),
         batt_units: [],
         // batt_bonus: "",
     };
@@ -351,7 +351,7 @@ function parseBattalion(start_index, end_index, list, num_asterisk) {
                 }
             }
 
-            let unit_stats = parseUnit(start_unit_index, final_unit_index, list, num_asterisk)
+            let unit_stats = parseUnit(start_unit_index, final_unit_index, list, num_batt_symbol)
             battalion.batt_units.push(unit_stats);
             // No need to iterate over again, skip ahead to the nex one
             i = final_unit_index;
