@@ -17,7 +17,13 @@ const BATTALION_NAMES = [
     "Vanguard",
     "Grand Battery",
     "Battle Regiment",
-    "Linebreaker"
+    "Linebreaker",
+    "Redemption Brotherhood",
+    "Brotherhood Command",
+    "Soulstrike Brotherhood",
+    "Ironjawz Fist",
+    "Kruleboyz Finga",
+    "Bonesplitterz Rukk"
 ]
 const BATTALION_SYMBOL = "+";
 
