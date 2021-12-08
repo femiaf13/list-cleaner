@@ -411,7 +411,9 @@ function formatList(army_list) {
     let army_export = '';
     army_export += 'List Name: '+army_list.army_name+'\n';
     army_export += 'Allegiance: '+army_list.army_alleigance+'\n';
-    army_export += '- Subfaction: '+army_list.army_subfaction+'\n';
+    if (army_list.army_subfaction != "") {
+        army_export += '- Subfaction: '+army_list.army_subfaction+'\n';
+    }
     if (army_list.army_type != "") {
         army_export += '- Army Type: '+army_list.army_type+'\n';
     }
@@ -456,83 +458,91 @@ function formatList(army_list) {
         }
     });
 
-    army_export += '\n';
-    army_export += 'Units\n';
-    army_export += '----------\n';
-    // Format the battleline in battalions
+    let unit_export = '';
+    // Format the units in battalions
     army_list.units.battalions.forEach(batt => {
         batt.batt_units.forEach(batt_unit => {
             if (batt_unit.unit_role == "Other") {
-                army_export = formatUnit(army_export, batt_unit);
+                unit_export = formatUnit(unit_export, batt_unit);
             }
         });
     });
     // And now the ones not in battalions
     army_list.units.none.forEach(unit => {
         if (unit.unit_role == "Other") {
-            army_export = formatUnit(army_export, unit);
+            unit_export = formatUnit(unit_export, unit);
         }
     });
+    // Only add the header if there's something in the section
+    if(unit_export){
+        army_export += "\nUnits\n----------\n" + unit_export;
+    }
 
-    army_export += '\n';
-    army_export += 'Artillery\n';
-    army_export += '----------\n';
+    unit_export = '';
     // Format the artillery in battalions
     army_list.units.battalions.forEach(batt => {
         batt.batt_units.forEach(batt_unit => {
             if (batt_unit.unit_role == "Artillery") {
-                army_export = formatUnit(army_export, batt_unit);
+                unit_export = formatUnit(unit_export, batt_unit);
             }
         });
     });
     // And now the ones not in battalions
     army_list.units.none.forEach(unit => {
         if (unit.unit_role == "Artillery") {
-            army_export = formatUnit(army_export, unit);
+            unit_export = formatUnit(unit_export, unit);
         }
     });
+    // Only add the header if there's something in the section
+    if(unit_export){
+        army_export += "\nArtillery\n----------\n" + unit_export;
+    }
 
-    army_export += '\n';
-    army_export += 'Behemoth\n';
-    army_export += '----------\n';
+    unit_export = '';
     // Format the artillery in battalions
     army_list.units.battalions.forEach(batt => {
         batt.batt_units.forEach(batt_unit => {
             if (batt_unit.unit_role == "Behemoth") {
-                army_export = formatUnit(army_export, batt_unit);
+                unit_export = formatUnit(unit_export, batt_unit);
             }
         });
     });
     // And now the ones not in battalions
     army_list.units.none.forEach(unit => {
         if (unit.unit_role == "Behemoth") {
-            army_export = formatUnit(army_export, unit);
+            unit_export = formatUnit(unit_export, unit);
         }
     });
+    // Only add the header if there's something in the section
+    if(unit_export){
+        army_export += "\nBehemoth\n----------\n" + unit_export;
+    }
 
-    army_export += '\n';
-    army_export += 'Endless Spells & Invocations\n';
-    army_export += '----------\n';
+    unit_export = '';
     army_list.endless_spells.forEach(spell => {
-        army_export += spell.endless_name + ' ('+spell.endless_points+')\n';
+        unit_export += spell.endless_name + ' ('+spell.endless_points+')\n';
     })
+    if(unit_export){
+        army_export += "\nEndless Spells & Invocations\n----------\n" + unit_export;
+    }
 
-    // Now name the core battalions and label which number of * they are
-    army_export += '\n';
-    army_export += 'Core Battalions\n';
-    army_export += '----------\n';
+    // Now name the core battalions and label which number of + they are
+    unit_export = '';
     army_list.units.battalions.forEach(batt => {
         // If they don't put anything in a battalion there won't be a symbol
         if (batt.batt_units.length != 0) {
-            army_export += batt.batt_name + batt.batt_units[0].unit_batt_symbol+'\n';
+            unit_export += batt.batt_name + batt.batt_units[0].unit_batt_symbol+'\n';
         }
         else {
-            army_export += batt.batt_name +'\n';
+            unit_export += batt.batt_name +'\n';
         }
         if ('batt_bonus' in batt) {
-            army_export += '- Bonus Enhancement: '+batt.batt_bonus+'\n';
+            unit_export += '- Bonus Enhancement: '+batt.batt_bonus+'\n';
         }
     });
+    if(unit_export){
+        army_export += "\nCore Battalions\n----------\n" + unit_export;
+    }
 
     army_export += '\n';
     army_export += 'Total Points: '+army_list.total_points+'\n';
