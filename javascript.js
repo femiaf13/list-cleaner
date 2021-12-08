@@ -248,12 +248,14 @@ function parseUnit(start_index, end_index, list, num_batt_symbol=0) {
     let unit = {
         unit_name: "",
         unit_role: "",
+        // These only get created if they're there
         // unit_trait: "",
         // unit_artefact: "",
         // unit_prayers: "",
         // unit_spells: "",
         // unit_mount_traits: "",
         // unit_reinforced: "",
+        // unit_mark_of_chaos: "",
         unit_points: "",
         unit_batt_symbol: BATTALION_SYMBOL.repeat(num_batt_symbol)
     };
@@ -284,6 +286,9 @@ function parseUnit(start_index, end_index, list, num_batt_symbol=0) {
         }
         else if (line.includes("Reinforced")){
             unit.unit_reinforced = line.split(":")[1].trim();
+        }
+        else if (line.includes("Mark of Chaos")){
+            unit.unit_mark_of_chaos = line.split(":")[1].trim();
         }
         else if (line.includes("Points")){
             unit.unit_points = line.split(":")[1].trim();
@@ -390,6 +395,9 @@ function formatUnit(army_export, unit) {
     }
     if ('unit_reinforced' in unit) {
         army_export += '- Reinforced: '+unit.unit_reinforced+'\n';
+    }
+    if ('unit_mark_of_chaos' in unit) {
+        army_export += '- Mark of Chaos: '+unit.unit_mark_of_chaos+'\n';
     }
 
     return army_export;
